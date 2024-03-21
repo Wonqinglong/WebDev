@@ -40,6 +40,20 @@
    
     const canvasSize = 10;
     generateCanvas(canvasSize);
+
+let cells = document.querySelectorAll('.cell');
+
+  cells.forEach(cell => {
+    cell.addEventListener('mousedown', event => {
+      if (event.button === 0) {
+         cell.style.backgroundColor = 'black';
+      } else if (event.button === 2) {
+         cell.style.backgroundColor = '';
+      }
+    });
+  });
+
+
 </script>
 </body>
 </html>
