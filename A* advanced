@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Square Canvas</title>
+<style>
+    .canvas {
+        display: grid;
+        border: 1px solid black;
+    }
+
+    .cell {
+        width: 20px;
+        height: 20px;
+        border: 1px solid lightgray;
+    }
+</style>
+</head>
+<body>
+<div class="canvas" id="canvas"></div>
+
+<script>
+    function generateCanvas(size) {
+        const canvas = document.getElementById('canvas');
+        canvas.innerHTML = '';
+
+        for (let i = 0; i < size; i++) {
+            for (let j = 0; j < size; j++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                canvas.appendChild(cell);
+            }
+        }
+
+        canvas.style.gridTemplateColumns = `repeat(${size}, 20px)`;
+        canvas.style.gridTemplateRows = `repeat(${size}, 20px)`;
+    }
+
+   
+    const canvasSize = 10;
+    generateCanvas(canvasSize);
+</script>
+</body>
+</html>
