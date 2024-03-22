@@ -54,17 +54,23 @@
     const canvasSize = 20;
     generateCanvas(canvasSize);
 
-let cells = document.querySelectorAll('.cell');
+ function generatePoints(count) {
+  const cells = document.querySelectorAll('.cell');
+  const randomCells = [];
 
-  cells.forEach(cell => {
-    cell.addEventListener('mousedown', event => {
-      if (event.button === 0) {
-         cell.style.backgroundColor = 'black';
-      } else if (event.button === 2) {
-         cell.style.backgroundColor = '';
-      }
-    });
+  for (let i = 0; i < count; i++) {
+    const randomIndex = Math.floor(Math.random() * cells.length);
+    randomCells.push(cells[randomIndex]);
+  }
+
+
+  randomCells.forEach(cell => {
+    cell.style.backgroundColor = 'black';
   });
+}
+let wallnumber= prompt("Please enter the number of walls")
+
+generatePoints(wallnumber);
 
 
 </script>
