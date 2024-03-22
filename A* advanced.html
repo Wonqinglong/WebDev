@@ -31,6 +31,8 @@
 </style>
 </head>
 <body>
+<button id="set-green">start</button>
+  &nbsp;
 <div class="canvas" id="canvas"></div>
 
 <script>
@@ -71,7 +73,23 @@
 let wallnumber= prompt("Please enter the number of walls")
 
 generatePoints(wallnumber);
+let selectedCell = null;
 
+const setGreenBtn = document.getElementById('set-green');
+const cells = document.querySelectorAll('.cell');
+
+setGreenBtn.addEventListener('click', () => {
+selectedCell = null;
+});
+
+cells.forEach(cell => {
+cell.addEventListener('click', () => {
+if (!selectedCell) {
+selectedCell = cell;
+cell.style.backgroundColor = 'green';
+}
+});
+});
 
 </script>
 </body>
