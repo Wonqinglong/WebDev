@@ -5,9 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Square Canvas</title>
 <style>
+    html, body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        padding-top: 40px;
+    }
+
     .canvas {
         display: grid;
         border: 1px solid black;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        width: 100%;
+       
     }
 
     .cell {
@@ -38,7 +51,7 @@
     }
 
    
-    const canvasSize = 10;
+    const canvasSize = 20;
     generateCanvas(canvasSize);
 
 let cells = document.querySelectorAll('.cell');
