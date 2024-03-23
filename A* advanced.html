@@ -33,8 +33,11 @@
 <body>
 <button id="set-green">start</button>
   &nbsp;
+  &nbsp;
 <div class="canvas" id="canvas"></div>
-
+  &nbsp;
+  &nbsp;
+<button id="set-red">end</button>
 <script>
     function generateCanvas(size) {
         const canvas = document.getElementById('canvas');
@@ -90,7 +93,26 @@ cell.style.backgroundColor = 'green';
 }
 });
 });
+const setRedBtn = document.getElementById('set-red');
+const gridCells = document.querySelectorAll('.cell');
 
+let isSettingRed = false;
+
+setRedBtn.addEventListener('click', () => {
+  isSettingRed = true;
+});
+
+let lastClickedGridCell = null;
+
+gridCells.forEach(cell => {
+  cell.addEventListener('click', () => {
+    if(isSettingRed) {
+      lastClickedGridCell = cell;
+      cell.style.backgroundColor = 'red';
+      isSettingRed = false;
+    }
+  });
+});
 </script>
 </body>
 </html>
