@@ -31,8 +31,13 @@
 </style>
 </head>
 <body>
+<button id="set-green">start</button>
+  &nbsp;
+  &nbsp;
 <div class="canvas" id="canvas"></div>
-
+  &nbsp;
+  &nbsp;
+<button id="set-red">end</button>
 <script>
     function generateCanvas(size) {
         const canvas = document.getElementById('canvas');
@@ -54,19 +59,60 @@
     const canvasSize = 20;
     generateCanvas(canvasSize);
 
-let cells = document.querySelectorAll('.cell');
+ function generatePoints(count) {
+  const cells = document.querySelectorAll('.cell');
+  const randomCells = [];
 
-  cells.forEach(cell => {
-    cell.addEventListener('mousedown', event => {
-      if (event.button === 0) {
-         cell.style.backgroundColor = 'black';
-      } else if (event.button === 2) {
-         cell.style.backgroundColor = '';
-      }
-    });
+  for (let i = 0; i < count; i++) {
+    const randomIndex = Math.floor(Math.random() * cells.length);
+    randomCells.push(cells[randomIndex]);
+  }
+
+
+  randomCells.forEach(cell => {
+    cell.style.backgroundColor = 'black';
   });
+}
+let wallnumber= prompt("Please enter the number of walls")
 
+generatePoints(wallnumber);
+let selectedCell = null;
 
+const setGreenBtn = document.getElementById('set-green');
+const cells = document.querySelectorAll('.cell');
+
+setGreenBtn.addEventListener('click', () => {
+selectedCell = null;
+});
+
+cells.forEach(cell => {
+cell.addEventListener('click', () => {
+if (!selectedCell) {
+selectedCell = cell;
+cell.style.backgroundColor = 'green';
+}
+});
+});
+const setRedBtn = document.getElementById('set-red');
+const gridCells = document.querySelectorAll('.cell');
+
+let isSettingRed = false;
+
+setRedBtn.addEventListener('click', () => {
+  isSettingRed = true;
+});
+
+let lastClickedGridCell = null;
+
+gridCells.forEach(cell => {
+  cell.addEventListener('click', () => {
+    if(isSettingRed) {
+      lastClickedGridCell = cell;
+      cell.style.backgroundColor = 'red';
+      isSettingRed = false;
+    }
+  });
+});
 </script>
 </body>
 </html>
