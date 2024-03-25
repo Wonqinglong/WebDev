@@ -16,11 +16,8 @@
     .canvas {
         display: grid;
         border: 1px solid black;
-        justify-content: center;
-        align-items: center;
-        height: 100%;
-        width: 100%;
-       
+        height: 400px;
+        width: 400px;
     }
 
     .cell {
@@ -31,14 +28,12 @@
 </style>
 </head>
 <body>
-<button id="set-green">start</button>
-  &nbsp;
-  &nbsp;
+<button id="set-green">Set Start</button>
 <div class="canvas" id="canvas"></div>
-  &nbsp;
-  &nbsp;
-<button id="set-red">end</button>
+<button id="set-red">Set End</button>
+<button id="start-algorithm">Start Algorithm</button>
 <script>
+
     function generateCanvas(size) {
         const canvas = document.getElementById('canvas');
         canvas.innerHTML = '';
@@ -113,6 +108,159 @@ gridCells.forEach(cell => {
     }
   });
 });
+// Define grid and nodes
+const grid = [];
+let openSet = [];
+    let closedSet = [];
+    let startNode = null;
+    let endNode = null;
+
+
+// Define Node class
+class Node {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.g = Infinity;
+        this.h = 0;
+        this.f = 0;
+        this.neighbors = [];
+        this.previous = null;
+        this.wall = false;
+    }
+
+    addNeighbors(grid) {
+        const { x, y } = this;
+        if (x > 0) this.neighbors.push(grid[x - 1][y]);
+        if (x < grid.length - 1) this.neighbors.push(grid[x + 1][y]);
+        if (y > 0) this.neighbors.push(grid[x][y - 1]);
+        if (y < grid[0].length - 1) this.neighbors.push(grid[x][y + 1]);
+    }
+}
+
+// Initialize grid and nodes
+for (let i = 0; i < canvasSize; i++) {
+    grid[i] = [];
+    for (let j = 0; j < canvasSize; j++) {
+        const cell = cells[i * canvasSize + j];
+        const node = new Node(i, j);
+        if (cell.style.backgroundColor === 'black') {
+            node.wall = true;
+        }
+        grid[i][j] = node;
+    }
+}
+
+for (let i = 0; i < canvasSize; i++) {
+    for (let j = 0; j < canvasSize; j++) {
+        grid[i][j].addNeighbors(grid);
+    }
+}
+
+// A* algorithm
+function aStar() {
+    openSet.push(startNode);
+
+    while (openSet.length > 0) {
+        let winner = 0;
+        for (let i = 0; i < openSet.length; i++) {
+            if (openSet[i].f < openSet[winner].f) {
+                winner = i;
+            }
+        }
+
+        const current = openSet[winner];
+
+        if (current === endNode) {
+            // Path found
+            let path = [];
+            let temp = current;
+            path.push(temp);
+            while (temp.previous) {
+                path.push(temp.previous);
+                temp = temp.previous;
+            }
+            return path;
+        }
+
+        openSet = openSet.filter(node => node !== current);
+        closedSet.push(current);
+
+        for (let neighbor of current.neighbors) {
+            if (!closedSet.includes(neighbor) && !neighbor.wall) {
+                const tempG = current.g + 1;
+
+                if (openSet.includes(neighbor)) {
+                    if (tempG < neighbor.g) {
+                        neighbor.g = tempG;
+                    }
+                } else {
+                    neighbor.g = tempG;
+                    openSet.push(neighbor);
+                }
+
+                neighbor.h = heuristic(neighbor, endNode);
+                neighbor.f = neighbor.g + neighbor.h;
+                neighbor.previous = current;
+            }
+        }
+    }
+
+    return []; // No path found
+}
+
+// Heuristic function (Manhattan distance)
+function heuristic(a, b) {
+    return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+}
+
+// Update cell colors to visualize path
+function visualizePath(path) {
+    for (let node of path) {
+        const cell = cells[node.x * canvasSize + node.y];
+        cell.style.backgroundColor = 'blue';
+    }
+}
+
+// Handle click events to set start and end points
+setGreenBtn.addEventListener('click', () => {
+    if (selectedCell) {
+        const index = Array.from(cells).indexOf(selectedCell);
+        startNode = grid[Math.floor(index / canvasSize)][index % canvasSize];
+        selectedCell = null;
+    }
+});
+
+setRedBtn.addEventListener('click', () => {
+    if (lastClickedGridCell) {
+        const index = Array.from(cells).indexOf(lastClickedGridCell);
+        endNode = grid[Math.floor(index / canvasSize)][index % canvasSize];
+        lastClickedGridCell = null;
+    }
+});
+
+document.getElementById('start-algorithm').addEventListener('click', () => {
+        openSet = [];
+        closedSet = [];
+        startNode = null;
+        endNode = null;
+
+        if (selectedCell) {
+            const index = Array.from(cells).indexOf(selectedCell);
+            startNode = grid[Math.floor(index / canvasSize)][index % canvasSize];
+        }
+        if (lastClickedGridCell) {
+            const index = Array.from(cells).indexOf(lastClickedGridCell);
+            endNode = grid[Math.floor(index / canvasSize)][index % canvasSize];
+        }
+
+        if (startNode && endNode) {
+            const path = aStar();
+            visualizePath(path);
+        } else {
+            alert("Please set both start and end points before starting the algorithm.");
+        }
+    });
 </script>
 </body>
 </html>
