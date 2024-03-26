@@ -1,1 +1,60 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Square Canvas</title>
+<style>
+    html, body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        padding-top: 40px;
+    }
+
+    .canvas {
+        display: grid;
+        border: 1px solid black;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        width: 100%;
+       
+    }
+
+    .cell {
+        width: 20px;
+        height: 20px;
+        border: 1px solid lightgray;
+    }
+</style>
+</head>
+<body>
+<div class="canvas" id="canvas"></div>
+
+<script>
+    function generateCanvas(size) {
+        const canvas = document.getElementById('canvas');
+        canvas.innerHTML = '';
+
+        const maxSize = Math.min(size, 30); // Maximum size of 30
+        for (let i = 0; i < maxSize; i++) {
+            for (let j = 0; j < maxSize; j++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                canvas.appendChild(cell);
+            }
+        }
+
+        canvas.style.gridTemplateColumns = `repeat(${maxSize}, 20px)`;
+        canvas.style.gridTemplateRows = `repeat(${maxSize}, 20px)`;
+    }
+
+   
+    const canvasSize = 20; // Default size
+    generateCanvas(canvasSize);
+</script>
+</body>
+</html>
