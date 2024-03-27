@@ -1,0 +1,20 @@
+html, body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    padding-top: 40px;
+}
+
+.canvas {
+    display: grid;
+    border: 1px solid black;
+    height: 400px;
+    width: 400px;
+}
+
+.cell {
+    width: 20px;
+    height: 20px;
+    border: 1px solid lightgray;
+}
