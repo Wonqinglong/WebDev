@@ -17,3 +17,20 @@ function generateCanvas(size) {
 
 const canvasSize = 20; // Default size
 generateCanvas(canvasSize);
+const cells = document.querySelectorAll('.cell');
+
+cells.forEach(cell => {
+
+  cell.addEventListener('click', () => {
+    cell.style.backgroundColor = 'black';
+  });
+
+});
+
+function clearCanvas() {
+
+  cells.forEach(cell => {
+    cell.style.backgroundColor = '';
+  });
+
+}
