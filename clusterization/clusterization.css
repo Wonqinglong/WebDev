@@ -1,0 +1,22 @@
+html, body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    padding-top: 40px;
+}
+
+.canvas {
+    display: grid;
+    border: 1px solid black;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+.cell {
+    width: 20px;
+    height: 20px;
+    border: 1px solid lightgray;
+}
