@@ -1,0 +1,103 @@
+class DBSCAN {
+    constructor(eps, minPts, distanceFunction) {
+        this.eps = eps; // epsilon
+        this.minPts = minPts; // minimum number of points
+        this.distanceFunction = distanceFunction; // distance function
+    }
+
+    // Calculate distance between two points
+    distance(pointA, pointB) {
+        return this.distanceFunction(pointA, pointB);
+    }
+
+    // Find neighbors of a point
+    regionQuery(point, dataset) {
+        const neighbors = [];
+        for (let i = 0; i < dataset.length; i++) {
+            const dist = this.distance(point, dataset[i]);
+            if (dist < this.eps) {
+                neighbors.push(i);
+            }
+        }
+        return neighbors;
+    }
+
+    // Expand the cluster from a seed point
+    expandCluster(pointIndex, neighbors, clusterId, dataset, visited, clusters) {
+        clusters[clusterId] = clusters[clusterId] || [];
+        clusters[clusterId].push(pointIndex);
+        visited[pointIndex] = true;
+
+        for (const neighbor of neighbors) {
+            if (!visited[neighbor]) {
+                visited[neighbor] = true;
+                const neighborNeighbors = this.regionQuery(dataset[neighbor], dataset);
+                if (neighborNeighbors.length >= this.minPts) {
+                    this.expandCluster(neighbor, neighborNeighbors, clusterId, dataset, visited, clusters);
+                }
+            }
+            if (!clusters[clusterId].includes(neighbor)) {
+                clusters[clusterId].push(neighbor);
+            }
+        }
+    }
+
+    // DBSCAN clustering
+    fit(dataset) {
+        const clusters = {};
+        const visited = {};
+
+        for (let i = 0; i < dataset.length; i++) {
+            if (visited[i]) continue;
+            visited[i] = true;
+
+            const neighbors = this.regionQuery(dataset[i], dataset);
+
+            if (neighbors.length < this.minPts) {
+                visited[i] = true; // Mark as noise
+                continue;
+            }
+
+            const clusterId = Object.keys(clusters).length;
+            this.expandCluster(i, neighbors, clusterId, dataset, visited, clusters);
+        }
+
+        return clusters;
+    }
+}
+
+// Example usage:
+
+// Euclidean distance function
+function euclideanDistance(pointA, pointB) {
+    const squaredDist = Math.pow(pointA[0] - pointB[0], 2) + Math.pow(pointA[1] - pointB[1], 2);
+    return Math.sqrt(squaredDist);
+}
+
+// Create a grid of points
+function createGridPoints(width, height, gridSize) {
+    const points = [];
+    for (let x = 0; x < width; x += gridSize) {
+        for (let y = 0; y < height; y += gridSize) {
+            points.push([x, y]);
+        }
+    }
+    return points;
+}
+
+// Example grid parameters
+const width = 100;
+const height = 100;
+const gridSize = 10;
+
+// Generate grid points
+const gridPoints = createGridPoints(width, height, gridSize);
+
+// DBSCAN parameters
+const eps = 15;
+const minPts = 4;
+
+// Apply DBSCAN clustering
+const dbscan = new DBSCAN(eps, minPts, euclideanDistance);
+const clusters = dbscan.fit(gridPoints);
+console.log(clusters);
