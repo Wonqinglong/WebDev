@@ -1,0 +1,114 @@
+class HierarchicalClustering {
+    constructor(distanceFunction) {
+        this.distanceFunction = distanceFunction;
+    }
+
+    // Calculate distance between two clusters
+    clusterDistance(clusterA, clusterB) {
+        let totalDist = 0;
+        for (const pointA of clusterA) {
+            for (const pointB of clusterB) {
+                totalDist += this.distanceFunction(pointA, pointB);
+            }
+        }
+        return totalDist / (clusterA.length * clusterB.length);
+    }
+
+    // Find the closest clusters
+    findClosestClusters(clusters, distanceMatrix) {
+        let minDist = Infinity;
+        let closestClusters = [0, 1];
+
+        for (let i = 0; i < clusters.length; i++) {
+            for (let j = i + 1; j < clusters.length; j++) {
+                const dist = distanceMatrix[i][j];
+                if (dist < minDist) {
+                    minDist = dist;
+                    closestClusters = [i, j];
+                }
+            }
+        }
+
+        return closestClusters;
+    }
+
+    // Update distance matrix after merging clusters
+    updateDistanceMatrix(distanceMatrix, mergedClusterIndex) {
+        const newDistanceMatrix = [];
+
+        for (let i = 0; i < distanceMatrix.length; i++) {
+            if (i !== mergedClusterIndex[0] && i !== mergedClusterIndex[1]) {
+                const newDist = (distanceMatrix[i][mergedClusterIndex[0]] + distanceMatrix[i][mergedClusterIndex[1]]) / 2;
+                newDistanceMatrix.push(new Array(newDistanceMatrix.length + 1).fill(0));
+                newDistanceMatrix[newDistanceMatrix.length - 1][newDistanceMatrix.length - 1] = 0;
+                for (let j = 0; j < newDistanceMatrix.length - 1; j++) {
+                    newDistanceMatrix[newDistanceMatrix.length - 1][j] = distanceMatrix[i][j];
+                    newDistanceMatrix[j][newDistanceMatrix.length - 1] = distanceMatrix[i][j];
+                }
+                newDistanceMatrix[newDistanceMatrix.length - 1][mergedClusterIndex[0]] = newDist;
+                newDistanceMatrix[mergedClusterIndex[0]][newDistanceMatrix.length - 1] = newDist;
+            }
+        }
+
+        return newDistanceMatrix;
+    }
+
+    // Hierarchical clustering
+    fit(dataset) {
+        const clusters = dataset.map(point => [point]);
+        let distanceMatrix = [];
+
+        for (let i = 0; i < clusters.length; i++) {
+            distanceMatrix.push(new Array(clusters.length).fill(0));
+            for (let j = 0; j < i; j++) {
+                const dist = this.clusterDistance(clusters[i], clusters[j]);
+                distanceMatrix[i][j] = dist;
+                distanceMatrix[j][i] = dist;
+            }
+        }
+
+        while (clusters.length > 1) {
+            const [clusterAIndex, clusterBIndex] = this.findClosestClusters(clusters, distanceMatrix);
+
+            const mergedCluster = [...clusters[clusterAIndex], ...clusters[clusterBIndex]];
+            clusters.splice(clusterAIndex, 1);
+            clusters.splice(clusterBIndex - 1, 1);
+            clusters.push(mergedCluster);
+
+            distanceMatrix = this.updateDistanceMatrix(distanceMatrix, [clusterAIndex, clusterBIndex]);
+        }
+
+        return clusters[0];
+    }
+}
+
+// Example usage:
+
+// Euclidean distance function
+function euclideanDistance(pointA, pointB) {
+    return Math.sqrt(Math.pow(pointA[0] - pointB[0], 2) + Math.pow(pointA[1] - pointB[1], 2));
+}
+
+// Create a grid of points
+function createGridPoints(width, height, gridSize) {
+    const points = [];
+    for (let x = 0; x < width; x += gridSize) {
+        for (let y = 0; y < height; y += gridSize) {
+            points.push([x, y]);
+        }
+    }
+    return points;
+}
+
+// Example grid parameters
+const width = 100;
+const height = 100;
+const gridSize = 10;
+
+// Generate grid points
+const gridPoints = createGridPoints(width, height, gridSize);
+
+// Hierarchical clustering
+const hierarchicalClustering = new HierarchicalClustering(euclideanDistance);
+const clusters = hierarchicalClustering.fit(gridPoints);
+console.log(clusters);
