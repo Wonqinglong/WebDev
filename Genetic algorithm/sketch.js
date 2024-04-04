@@ -1,5 +1,5 @@
 var cities = [];
-var totalCities = 5;
+var totalCities = prompt("Please enter the number of cities");
 
 var population = [];
 var fitness = [];
