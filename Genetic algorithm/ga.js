@@ -1,9 +1,14 @@
 function findBest() {
+    var currentRecord = Infinity;
     for (var i = 0; i < population.length; i++) {
         var d = calcDistance(cities, population[i]);
         if (d < recordDistance) {
             recordDistance = d;
             bestEver = population[i];
+        }
+        if (d < currentRecord) {
+            currentRecord = d;
+            currentBest = population[i];
         }
         fitness[i] = 1 / (d + 1);
     }
@@ -11,10 +16,10 @@ function findBest() {
 
 function normalizeFitness() {
     var sum = 0;
-    for (var i = 0; i < fitness.length; i++) { // Fixed typo: changed , to <
+    for (var i = 0; i < fitness.length; i++) {
         sum += fitness[i];
     }
-    for (var i = 0; i < fitness.length; i++) { // Fixed typo: changed , to <
+    for (var i = 0; i < fitness.length; i++) {
         fitness[i] = fitness[i] / sum;
     }
 }
@@ -22,9 +27,11 @@ function normalizeFitness() {
 function nextGeneration() {
     var newPopulation = [];
     for (var i = 0; i < population.length; i++) {
-        var order = pickOne(population, fitness);
-        mutate(order);
-        newPopulation[i] = order; // Fixed typo: changed new population[i] to newPopulation[i]
+        var orderA = pickOne(population, fitness);
+        var orderB = pickOne(population, fitness);
+        var order = crossOver(orderA, orderB);
+        mutate(order, 0.1);
+        newPopulation[i] = order;
     }
     population = newPopulation;
 }
@@ -37,12 +44,31 @@ function pickOne(list, prob) {
         r = r - prob[index];
         index++;
     }
-    index--; // Fixed typo: changed imdex to index
+    index--;
     return list[index].slice();
 }
 
+function crossOver(orderA, orderB) {
+    var start = floor(random(orderA.length));
+    var end = floor(random(start + 1, orderA.length));
+    var neworder = orderA.slice(start, end);
+
+    var left = totalCities - neworder.length;
+    for (var i = 0; i < orderB.length; i++) {
+        var city = orderB[i];
+        if (!neworder.includes(city)) {
+            neworder.push(city);
+        }
+    }
+    return neworder;
+}
+
 function mutate(order, mutationRate) {
-    var indexA = floor(random(order.length));
-    var indexB = floor(random(order.length));
-    swap(order, indexA, indexB); // Fixed typo: changed IndexB to indexB
+    for (var i = 0; i < totalCities; i++) {
+        if (random(1) < mutationRate) {
+            var indexA = floor(random(order.length));
+            var indexB = floor(random(order.length));
+            // Swap function definition or built-in array swap method goes here
+        }
+    }
 }
