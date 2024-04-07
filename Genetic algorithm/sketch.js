@@ -1,5 +1,4 @@
 var cities = [];
-var totalCities = prompt("Please enter the number of cities");
 var popSize = 300;
 var population = [];
 var fitness = [];
@@ -10,7 +9,8 @@ var statusP;
 
 function setup() {
     createCanvas(1200, 740);
-    var order = [];
+  totalCities = prompt("Please enter the number of cities");
+   var order = [];
     for (var i = 0; i < totalCities; i++) {
         var v = createVector(random(width), random(height)); // Fixed typo: changed random to random(height)
         cities[i] = v;
@@ -31,28 +31,29 @@ function calculateFitness() {
     }
 }
 
-function draw() {
-    findBest();
+var running = true;
 
+function draw() {
     background(0);
 
     // GA
-    calculateFitness();
-    normalizeFitness();
-    nextGeneration();
-    if (bestEver) {
-        stroke(255);
-        strokeWeight(4);
-        noFill();
-        beginShape();
-        for (var i = 0; i < bestEver.length; i++) {
-            var n = bestEver[i];
-            vertex(cities[n].x, cities[n].y);
-            ellipse(cities[n].x, cities[n].y, 16, 16);
+    findBest();
+   if (running) {
+        calculateFitness();
+        normalizeFitness();
+        nextGeneration();
+
+        // Check if the best solution is found
+        if (recordDistance === Infinity) {
+            statusP.html('Calculating...');
+        } else {
+            statusP.html('Best distance: ' + recordDistance);
         }
-        endShape();
-       
-        stroke(255);
+    }
+
+    // Draw currentBest path
+   if (currentBest) {
+        stroke(0, 255, 0); // Green color for currentBest path
         strokeWeight(4);
         noFill();
         beginShape();
@@ -62,8 +63,20 @@ function draw() {
         }
         endShape();
     }
+    
+    if (bestEver) {
+        stroke(255, 0, 0); // Red color for bestEver path
+        strokeWeight(4);
+        noFill();
+        beginShape();
+        for (var i = 0; i < bestEver.length; i++) {
+            var n = bestEver[i];
+            vertex(cities[n].x, cities[n].y);
+            ellipse(cities[n].x, cities[n].y, 16, 16);
+        }
+        endShape();
+    }
 }
-
 function swap(a, i, j) {
     var temp = a[i];
     a[i] = a[j];
