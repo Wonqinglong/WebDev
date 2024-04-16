@@ -173,48 +173,35 @@ function getMajorityResult(data, targetAttribute) {
     return majorityResult;
 }
 
-// 决策树可视化逻辑（树状图）
-function displayTree(decisionTree, container, x = 0, y = 0) {
+
+// 决策树可视化逻辑（动画效果）
+function displayTree(decisionTree, container, indent = 0) {
+    let delay = 0;
     if (decisionTree.result !== null) {
-        drawNode(decisionTree.result, container, x, y);
+        addNode('结果: ' + decisionTree.result, indent * 10, delay, container);
     } else {
-        drawNode(decisionTree.attribute, container, x, y);
-        let branchX = x;
-        for (const branch of Object.values(decisionTree.branches)) {
-            const childX = branchX + 150;
-            const childY = y + 100;
-            drawBranch(container, x, y, childX, childY);
-            displayTree(branch, container, childX, childY);
-            branchX = childX;
+        addNode('属性: ' + decisionTree.attribute, indent * 10, delay, container);
+        delay += 500; // 增加延迟时间，使得节点以动画形式显示
+        for (const [value, branch] of Object.entries(decisionTree.branches)) {
+            addNode('值: ' + value, indent * 10 + 20, delay, container);
+            delay += 500; // 增加延迟时间，使得节点以动画形式显示
+            displayTree(branch, container, indent + 1);
         }
     }
 }
 
-// 绘制节点
-function drawNode(text, container, x, y) {
-    const node = document.createElement('div');
-    node.classList.add('node');
-    node.textContent = text;
-    node.style.position = 'absolute';
-    node.style.left = x + 'px';
-    node.style.top = y + 'px';
-    container.appendChild(node);
-}
-
-// 绘制分支连接线
-function drawBranch(container, startX, startY, endX, endY) {
-    const branchLine = document.createElement('div');
-    branchLine.classList.add('branch-line');
-    branchLine.style.position = 'absolute';
-    branchLine.style.width = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2)) + 'px';
-    branchLine.style.height = '2px';
-    branchLine.style.background = '#f00';
-    branchLine.style.transformOrigin = '0 0';
-    const angle = Math.atan2(endY - startY, endX - startX) * 180 / Math.PI;
-    branchLine.style.transform = 'rotate(' + angle + 'deg)';
-    branchLine.style.left = startX + 'px';
-    branchLine.style.top = startY + 'px';
-    container.appendChild(branchLine);
+// 在页面上添加节点，并以动画形式显示
+function addNode(text, marginLeft, delay, container) {
+    setTimeout(function() {
+        const node = document.createElement('div');
+        node.textContent = text;
+        node.style.marginLeft = marginLeft + 'px';
+        node.classList.add('node');
+        container.appendChild(node);
+        setTimeout(function() {
+            node.classList.add('show');
+        }, 100); // 延迟100毫秒显示节点，以实现动画效果
+    }, delay);
 }
 </script>
 </body>
