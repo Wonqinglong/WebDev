@@ -1,0 +1,40 @@
+#upload-btn {
+    margin-bottom: 10px;
+}
+
+#tree-container {
+    font-family: monospace;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+}
+
+.node {
+    position: relative;
+    display: inline-block;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 20px;
+    transition: transform 0.3s ease;
+}
+
+.node.collapsed {
+    transform: scale(0);
+}
+
+.branch-line {
+    position: absolute;
+    background-color: #ccc;
+    width: 2px;
+    top: 0;
+    bottom: 0;
+    left: calc(50% - 1px);
+    z-index: -1;
+    transition: transform 0.3s ease;
+}
+
+.branch-line.collapsed {
+    transform: scaleY(0);
+}
